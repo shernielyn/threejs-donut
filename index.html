@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Three.js Donut</title>
+  <title>Pink Donuts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/js/loaders/FontLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/js/geometries/TextGeometry.js"></script>
 </head>
 <body style="margin: 0; overflow: hidden;">
   <script>
     // Scene setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x1e1e1e); // Dark gray background
+    scene.background = new THREE.Color(0xffffff); // White background
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Load matcap texture
-    const matcapTexture = new THREE.TextureLoader().load(
-      'https://threejs.org/examples/textures/matcaps/8.png',
-      () => console.log("Matcap loaded successfully!"),
-      undefined,
-      (err) => console.error("Matcap loading error:", err)
+    // Load a pink matcap texture
+    const pinkMatcap = new THREE.TextureLoader().load(
+      'https://threejs.org/examples/textures/matcaps/9.png', // Pink texture
+      () => console.log("Pink Matcap loaded successfully!")
     );
 
-    const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+    const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: pinkMatcap });
 
     // Create donut geometry
     const donutGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
@@ -34,7 +34,7 @@
     for (let i = 0; i < 50; i++) {
       const donut = new THREE.Mesh(donutGeometry, donutMaterial);
 
-      // Randomize position, rotation, and scale
+      // Randomize position, rotation, and size
       donut.position.set(
         (Math.random() - 0.5) * 10, // Random X
         (Math.random() - 0.5) * 10, // Random Y
@@ -49,16 +49,32 @@
       scene.add(donut);
     }
 
+    // Add text "ITE 18"
+    const fontLoader = new THREE.FontLoader();
+    fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+      const textGeometry = new THREE.TextGeometry('ITE 18', {
+        font: font,
+        size: 1,
+        height: 0.2,
+      });
+
+      const textMaterial = new THREE.MeshMatcapMaterial({ matcap: pinkMatcap });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+
+      textMesh.position.set(-3, 2, 0); // Position the text
+      scene.add(textMesh);
+    });
+
     // Camera setup
-    camera.position.z = 5;
+    camera.position.z = 10;
 
     // Animate the scene
     function animate() {
       requestAnimationFrame(animate);
 
       // Rotate the camera around the center
-      camera.position.x = Math.sin(Date.now() * 0.001) * 5;
-      camera.position.y = Math.cos(Date.now() * 0.001) * 5;
+      camera.position.x = Math.sin(Date.now() * 0.001) * 10;
+      camera.position.y = Math.cos(Date.now() * 0.001) * 10;
       camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
