@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pink Donuts</title>
+  <title>Pink Hearts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/js/loaders/FontLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/js/geometries/TextGeometry.js"></script>
@@ -26,28 +25,38 @@
       () => console.log("Pink Matcap loaded successfully!")
     );
 
-    const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: pinkMatcap });
+    const heartMaterial = new THREE.MeshMatcapMaterial({ matcap: pinkMatcap });
 
-    // Create donut geometry
-    const donutGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
+    // Create heart shape geometry
+    function createHeartGeometry() {
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.bezierCurveTo(0, 1, 1, 1, 1, 0);
+      shape.bezierCurveTo(1, -1, 0, -1, 0, 0);
+      shape.bezierCurveTo(-1, -1, -1, 0, 0, 0);
+      shape.bezierCurveTo(-1, 1, 0, 1, 0, 0);
+      return shape;
+    }
 
-    // Add multiple donuts
+    const heartGeometry = new THREE.ExtrudeGeometry(createHeartGeometry(), { depth: 0.2, bevelEnabled: false });
+
+    // Add multiple hearts
     for (let i = 0; i < 50; i++) {
-      const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+      const heart = new THREE.Mesh(heartGeometry, heartMaterial);
 
       // Randomize position, rotation, and size
-      donut.position.set(
+      heart.position.set(
         (Math.random() - 0.5) * 10, // Random X
         (Math.random() - 0.5) * 10, // Random Y
         (Math.random() - 0.5) * 10  // Random Z
       );
-      donut.rotation.set(
+      heart.rotation.set(
         Math.random() * Math.PI, // Random X rotation
         Math.random() * Math.PI, // Random Y rotation
         0
       );
-      donut.scale.setScalar(Math.random() * 0.5 + 0.5); // Random size
-      scene.add(donut);
+      heart.scale.setScalar(Math.random() * 0.5 + 0.5); // Random size
+      scene.add(heart);
     }
 
     // Add text "ITE 18"
@@ -80,7 +89,7 @@
     // Add directional light
     const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); // White light
     directionalLight.position.set(5, 5, 5).normalize();
-    scene.add(directionalLight);
+    scene.add(directionalLight );
 
     // Camera setup
     camera.position.z = 10;
@@ -99,3 +108,5 @@
 
     animate();
   </script>
+</body>
+</html>
