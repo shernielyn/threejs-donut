@@ -17,26 +17,28 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Lighting
-    const light = new THREE.AmbientLight(0xffffff, 1); // Ambient light
-    scene.add(light);
+    // Load matcap texture
+    const matcapTexture = new THREE.TextureLoader().load(
+      'https://threejs.org/examples/textures/matcaps/8.png',
+      () => console.log("Matcap loaded successfully!"),
+      undefined,
+      (err) => console.error("Matcap loading error:", err)
+    );
 
-    // Load matcap texture for shiny effect
-    const matcapTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/matcaps/8.png');
     const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
 
-    // Create a donut geometry
+    // Create donut geometry
     const donutGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
 
     // Add multiple donuts
     for (let i = 0; i < 50; i++) {
       const donut = new THREE.Mesh(donutGeometry, donutMaterial);
 
-      // Randomize position, rotation, and size
+      // Randomize position, rotation, and scale
       donut.position.set(
-        (Math.random() - 0.5) * 10, // Random X position
-        (Math.random() - 0.5) * 10, // Random Y position
-        (Math.random() - 0.5) * 10  // Random Z position
+        (Math.random() - 0.5) * 10, // Random X
+        (Math.random() - 0.5) * 10, // Random Y
+        (Math.random() - 0.5) * 10  // Random Z
       );
       donut.rotation.set(
         Math.random() * Math.PI, // Random X rotation
@@ -47,14 +49,14 @@
       scene.add(donut);
     }
 
-    // Camera position
+    // Camera setup
     camera.position.z = 5;
 
-    // Animation loop
+    // Animate the scene
     function animate() {
       requestAnimationFrame(animate);
 
-      // Rotate the camera for dynamic effect
+      // Rotate the camera around the center
       camera.position.x = Math.sin(Date.now() * 0.001) * 5;
       camera.position.y = Math.cos(Date.now() * 0.001) * 5;
       camera.lookAt(0, 0, 0);
