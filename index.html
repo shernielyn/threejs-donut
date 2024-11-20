@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Heart Donuts</title>
+  <title>Pink Hearts</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/js/loaders/FontLoader.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/js/geometries/TextGeometry.js"></script>
@@ -27,33 +27,22 @@
 
     const heartMaterial = new THREE.MeshMatcapMaterial({ matcap: pinkMatcap });
 
-    // Create a 3D heart-shaped torus (like a donut)
-    function createHeartTorusGeometry() {
-      const heartShape = new THREE.Shape();
-      heartShape.moveTo(0, 0.3);
-      heartShape.bezierCurveTo(0.5, 1.2, 1.5, 1, 1.2, 0);
-      heartShape.bezierCurveTo(1.0, -0.8, 0, -0.6, 0, -1.1);
-      heartShape.bezierCurveTo(0, -0.6, -1.0, -0.8, -1.2, 0);
-      heartShape.bezierCurveTo(-1.5, 1, -0.5, 1.2, 0, 0.3);
-
-      const heartPath = new THREE.Path();
-      heartPath.absarc(0, 0, 0.3, 0, Math.PI * 2, false); // Create the hole in the heart
-
-      const heartGeometry = new THREE.ExtrudeGeometry(heartShape, {
-        depth: 0.5,
-        bevelEnabled: true,
-        bevelThickness: 0.05,
-        bevelSize: 0.05,
-        bevelSegments: 5
-      });
-
-      heartGeometry.holes.push(heartPath);
-      return heartGeometry;
+    // Create heart shape geometry
+    function createHeartGeometry() {
+      const shape = new THREE.Shape();
+      shape.moveTo(0, 0);
+      shape.bezierCurveTo(0, 1, 1, 1, 1, 0);
+      shape.bezierCurveTo(1, -1, 0, -1, 0, 0);
+      shape.bezierCurveTo(-1, -1, -1, 0, 0, 0);
+      shape.bezierCurveTo(-1, 1, 0, 1, 0, 0);
+      return shape;
     }
 
-    // Create multiple heart donuts
+    const heartGeometry = new THREE.ExtrudeGeometry(createHeartGeometry(), { depth: 0.2, bevelEnabled: false });
+
+    // Add multiple hearts
     for (let i = 0; i < 50; i++) {
-      const heart = new THREE.Mesh(createHeartTorusGeometry(), heartMaterial);
+      const heart = new THREE.Mesh(heartGeometry, heartMaterial);
 
       // Randomize position, rotation, and size
       heart.position.set(
@@ -85,6 +74,22 @@
       textMesh.position.set(-3, 2, 0); // Position the text
       scene.add(textMesh);
     });
+
+    // Add a ground plane
+    const planeGeometry = new THREE.PlaneGeometry(20, 20);
+    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xd3d3d3, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.rotation.x = -Math.PI / 2; // Rotate plane to be horizontal
+    scene.add(plane);
+
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft white light
+    scene.add(ambientLight);
+
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); // White light
+    directionalLight.position.set(5, 5, 5).normalize();
+    scene.add(directionalLight );
 
     // Camera setup
     camera.position.z = 10;
