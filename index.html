@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -65,6 +66,22 @@
       scene.add(textMesh);
     });
 
+    // Add a ground plane
+    const planeGeometry = new THREE.PlaneGeometry(20, 20);
+    const planeMaterial = new THREE.MeshBasicMaterial({ color: 0xd3d3d3, side: THREE.DoubleSide });
+    const plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.rotation.x = -Math.PI / 2; // Rotate plane to be horizontal
+    scene.add(plane);
+
+    // Add ambient light
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5); // Soft white light
+    scene.add(ambientLight);
+
+    // Add directional light
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5); // White light
+    directionalLight.position.set(5, 5, 5).normalize();
+    scene.add(directionalLight);
+
     // Camera setup
     camera.position.z = 10;
 
@@ -82,5 +99,3 @@
 
     animate();
   </script>
-</body>
-</html>
