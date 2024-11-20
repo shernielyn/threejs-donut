@@ -8,6 +8,11 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
   <script>
+    // Check if Three.js loaded correctly
+    if (!THREE) {
+      console.error('Three.js failed to load');
+    }
+
     // Scene Setup
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,53 +20,42 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Add Lighting
-    const light = new THREE.AmbientLight(0xffffff, 1); // Ambient light to make objects visible
+    // Add a basic ambient light to the scene
+    const light = new THREE.AmbientLight(0x404040, 1); // Soft light
     scene.add(light);
 
+    // Add a point light to make sure the scene is lit properly
+    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
+    pointLight.position.set(5, 5, 5);
+    scene.add(pointLight);
+
     // Donut Geometry and Material
-    const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
-    const matcapTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/matcaps/8.png');
-    const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+    const donutGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
+    const donutMaterial = new THREE.MeshStandardMaterial({ color: 0x0077ff });
+    const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+    scene.add(donut);
 
-    // Text Geometry and Material
-    const loader = new THREE.FontLoader();
-    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
-      const textGeometry = new THREE.TextGeometry('Hello Three.js', {
-        font: font,
-        size: 1,
-        height: 0.2,
-      });
+    // Camera position
+    camera.position.z = 5;
 
-      const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
-      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-      textMesh.position.set(0, 0, -5);
-      scene.add(textMesh);
+    // Check the camera and light positions
+    console.log('Camera Position: ', camera.position);
+    console.log('Point Light Position: ', pointLight.position);
 
-      // Donuts in a loop
-      for (let i = 0; i < 100; i++) {
-        const donut = new THREE.Mesh(donutGeometry, donutMaterial);
-        donut.position.set(Math.random() * 5 - 2.5, Math.random() * 5 - 2.5, Math.random() * -5 - 5);
-        donut.scale.set(Math.random(), Math.random(), Math.random());
-        scene.add(donut);
-      }
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
 
-      camera.position.z = 5;
+      // Rotate the donut
+      donut.rotation.x += 0.01;
+      donut.rotation.y += 0.01;
 
-      // Animation Loop
-      function animate() {
-        requestAnimationFrame(animate);
-        scene.traverse(function(object) {
-          if (object instanceof THREE.Mesh) {
-            object.rotation.x += 0.01;
-            object.rotation.y += 0.01;
-          }
-        });
-        renderer.render(scene, camera);
-      }
+      // Render the scene
+      renderer.render(scene, camera);
+    }
 
-      animate();
-    });
+    // Start animation
+    animate();
   </script>
 </body>
 </html>
