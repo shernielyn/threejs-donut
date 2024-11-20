@@ -8,53 +8,60 @@
 </head>
 <body style="margin: 0; overflow: hidden;">
   <script>
-    // Check if Three.js loaded correctly
-    if (!THREE) {
-      console.error('Three.js failed to load');
-    }
-
-    // Scene Setup
+    // Scene setup
     const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1e1e1e); // Dark gray background
+
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Add a basic ambient light to the scene
-    const light = new THREE.AmbientLight(0x404040, 1); // Soft light
+    // Lighting
+    const light = new THREE.AmbientLight(0xffffff, 1); // Ambient light
     scene.add(light);
 
-    // Add a point light to make sure the scene is lit properly
-    const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-    pointLight.position.set(5, 5, 5);
-    scene.add(pointLight);
+    // Load matcap texture for shiny effect
+    const matcapTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/matcaps/8.png');
+    const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
 
-    // Donut Geometry and Material
+    // Create a donut geometry
     const donutGeometry = new THREE.TorusGeometry(0.5, 0.2, 16, 100);
-    const donutMaterial = new THREE.MeshStandardMaterial({ color: 0x0077ff });
-    const donut = new THREE.Mesh(donutGeometry, donutMaterial);
-    scene.add(donut);
+
+    // Add multiple donuts
+    for (let i = 0; i < 50; i++) {
+      const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+
+      // Randomize position, rotation, and size
+      donut.position.set(
+        (Math.random() - 0.5) * 10, // Random X position
+        (Math.random() - 0.5) * 10, // Random Y position
+        (Math.random() - 0.5) * 10  // Random Z position
+      );
+      donut.rotation.set(
+        Math.random() * Math.PI, // Random X rotation
+        Math.random() * Math.PI, // Random Y rotation
+        0
+      );
+      donut.scale.setScalar(Math.random() * 0.5 + 0.5); // Random size
+      scene.add(donut);
+    }
 
     // Camera position
     camera.position.z = 5;
 
-    // Check the camera and light positions
-    console.log('Camera Position: ', camera.position);
-    console.log('Point Light Position: ', pointLight.position);
-
-    // Animation Loop
+    // Animation loop
     function animate() {
       requestAnimationFrame(animate);
 
-      // Rotate the donut
-      donut.rotation.x += 0.01;
-      donut.rotation.y += 0.01;
+      // Rotate the camera for dynamic effect
+      camera.position.x = Math.sin(Date.now() * 0.001) * 5;
+      camera.position.y = Math.cos(Date.now() * 0.001) * 5;
+      camera.lookAt(0, 0, 0);
 
-      // Render the scene
       renderer.render(scene, camera);
     }
 
-    // Start animation
     animate();
   </script>
 </body>
