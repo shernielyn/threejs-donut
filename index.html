@@ -15,47 +15,53 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
-    // Donut Geometry
+    // Add Lighting
+    const light = new THREE.AmbientLight(0xffffff, 1); // Ambient light to make objects visible
+    scene.add(light);
+
+    // Donut Geometry and Material
     const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
     const matcapTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/matcaps/8.png');
     const donutMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
 
-    // Text Geometry
-    const textGeometry = new THREE.TextGeometry('Hello Three.js', {
-      font: new THREE.FontLoader().load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json'),
-      size: 1,
-      height: 0.2,
-    });
-    const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
-    const textMesh = new THREE.Mesh(textGeometry, textMaterial);
-    scene.add(textMesh);
-
-    // Positioning the text
-    textMesh.position.set(0, 0, -5);
-
-    // Donuts in a loop
-    for (let i = 0; i < 100; i++) {
-      const donut = new THREE.Mesh(donutGeometry, donutMaterial);
-      donut.position.set(Math.random() * 5 - 2.5, Math.random() * 5 - 2.5, Math.random() * -5 - 5);
-      donut.scale.set(Math.random(), Math.random(), Math.random());
-      scene.add(donut);
-    }
-
-    camera.position.z = 5;
-
-    // Animation Loop
-    function animate() {
-      requestAnimationFrame(animate);
-      scene.traverse(function (object) {
-        if (object instanceof THREE.Mesh) {
-          object.rotation.x += 0.01;
-          object.rotation.y += 0.01;
-        }
+    // Text Geometry and Material
+    const loader = new THREE.FontLoader();
+    loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function(font) {
+      const textGeometry = new THREE.TextGeometry('Hello Three.js', {
+        font: font,
+        size: 1,
+        height: 0.2,
       });
-      renderer.render(scene, camera);
-    }
 
-    animate();
+      const textMaterial = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+      const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+      textMesh.position.set(0, 0, -5);
+      scene.add(textMesh);
+
+      // Donuts in a loop
+      for (let i = 0; i < 100; i++) {
+        const donut = new THREE.Mesh(donutGeometry, donutMaterial);
+        donut.position.set(Math.random() * 5 - 2.5, Math.random() * 5 - 2.5, Math.random() * -5 - 5);
+        donut.scale.set(Math.random(), Math.random(), Math.random());
+        scene.add(donut);
+      }
+
+      camera.position.z = 5;
+
+      // Animation Loop
+      function animate() {
+        requestAnimationFrame(animate);
+        scene.traverse(function(object) {
+          if (object instanceof THREE.Mesh) {
+            object.rotation.x += 0.01;
+            object.rotation.y += 0.01;
+          }
+        });
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    });
   </script>
 </body>
 </html>
